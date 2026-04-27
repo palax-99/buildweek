@@ -6,8 +6,10 @@ import finalBW.buildweek.repository.ProvinciaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ProvinciaService {
@@ -48,36 +50,56 @@ public class ProvinciaService {
 
     @Transactional
     public void saveAll(List<Provincia> province) {
-        for (Provincia provincia : province) {
-            provinciaRepository.save(provincia);
-        }
+        provinciaRepository.saveAll(province);
     }
 
     @Transactional
     public void replaceAll(List<Provincia> province) {
         provinciaRepository.deleteAllInBatch();
         provinciaRepository.flush();
-        for (Provincia provincia : province) {
-            provinciaRepository.save(provincia);
-        }
+        provinciaRepository.saveAll(province);
     }
 
     @Transactional
     public void syncAll(List<Provincia> province) {
+
+        if (provinciaRepository.count() == 0) {
+            provinciaRepository.saveAll(province);
+            return;
+        }
+
+        Map<String, Provincia> provinceFromDb = provinciaRepository.findAll()
+                .stream()
+                .collect(Collectors.toMap(
+                        provincia -> provincia.getSigla().toUpperCase().trim(),
+                        provincia -> provincia
+                ));
+
+        List<Provincia> provinceDaSalvare = new ArrayList<>();
+
         for (Provincia provincia : province) {
-            Provincia provinciaFromDb = provinciaRepository.findBySigla(provincia.getSigla()).orElse(null);
+
+            String sigla = provincia.getSigla().toUpperCase().trim();
+
+            Provincia provinciaFromDb = provinceFromDb.get(sigla);
+
             if (provinciaFromDb == null) {
-                provinciaRepository.save(provincia);
+                provinceDaSalvare.add(provincia);
             } else {
-                boolean diversa = !provinciaFromDb.getProvinciaNome().equals(provincia.getProvinciaNome()) || provinciaFromDb.getRegione() != provincia.getRegione();
+                boolean diversa =
+                        !provinciaFromDb.getProvinciaNome().equals(provincia.getProvinciaNome())
+                                || provinciaFromDb.getRegione() != provincia.getRegione();
+
                 if (diversa) {
                     provinciaFromDb.setProvinciaNome(provincia.getProvinciaNome());
                     provinciaFromDb.setRegione(provincia.getRegione());
 
-                    provinciaRepository.save(provinciaFromDb);
+                    provinceDaSalvare.add(provinciaFromDb);
                 }
             }
         }
+
+        provinciaRepository.saveAll(provinceDaSalvare);
     }
 
     @Transactional(readOnly = true)
