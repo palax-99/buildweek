@@ -4,4 +4,10 @@ import finalBW.buildweek.entity.Utente;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UtenteRepository extends JpaRepository<Utente, Long> {
+
+    boolean existsByEmail(String email);
+
+    boolean existsByUsername(String username);
+
+    // Optional<Ruolo> findByDenominazione(String denominazione); chiedo per utente subito user
 }
