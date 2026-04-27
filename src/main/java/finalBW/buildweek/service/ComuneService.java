@@ -22,6 +22,10 @@ public class ComuneService {
     @Transactional
     public void syncAll(List<Comune> comuni) {
 
+        if (comuneRepository.count() == 0) {
+            comuneRepository.saveAll(comuni);
+            return;
+        }
 
         Set<String> comuniGiaPresenti = comuneRepository.findAllWithProvincia().stream().map(this::key).collect(Collectors.toSet());
         List<Comune> comuniDaSalvare = new ArrayList<>();
