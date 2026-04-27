@@ -17,7 +17,7 @@ public enum Regione {
     SARDEGNA("Sardegna"),
     SICILIA("Sicilia"),
     TOSCANA("Toscana"),
-    TRENTINO_ALTO_ADIGE_SÜDTIROL("Trentino Alto Adige"),
+    TRENTINO_ALTO_ADIGE_SUDTIROL("Trentino Alto Adige"),
     UMBRIA("Umbria"),
     VALLE_D_AOSTA("Valle d'Aosta"),
     VENETO("Veneto");
@@ -26,6 +26,15 @@ public enum Regione {
 
     Regione(String name) {
         this.name = name;
+    }
+
+    public static Regione fromName(String name) {
+        for (Regione regione : Regione.values()) {
+            if (regione.getName().equalsIgnoreCase(name.trim())) {
+                return regione;
+            }
+        }
+        throw new IllegalArgumentException("Regione non valida: " + name);
     }
 
     public String getName() {
