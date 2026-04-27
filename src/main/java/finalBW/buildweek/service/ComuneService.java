@@ -5,7 +5,10 @@ import finalBW.buildweek.repository.ComuneRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ComuneService {
@@ -18,11 +21,24 @@ public class ComuneService {
 
     @Transactional
     public void syncAll(List<Comune> comuni) {
+
+
+        Set<String> comuniGiaPresenti = comuneRepository.findAllWithProvincia().stream().map(this::key).collect(Collectors.toSet());
+        List<Comune> comuniDaSalvare = new ArrayList<>();
         for (Comune comune : comuni) {
-            Comune comuneFromDb = comuneRepository.findByComuneNomeIgnoreCaseAndProvinciaProvinciaNomeIgnoreCase(comune.getComuneNome(), comune.getProvincia().getProvinciaNome()).orElse(null);
-            if (comuneFromDb == null) {
-                comuneRepository.save(comune);
+            String key = key(comune);
+
+            if (!comuniGiaPresenti.contains(key)) {
+                comuniDaSalvare.add(comune);
+                comuniGiaPresenti.add(key);
             }
+
+            comuneRepository.saveAll(comuniDaSalvare);
         }
     }
+
+    private String key(Comune comune) {
+        return comune.getComuneNome().toLowerCase().trim() + "|" + comune.getProvincia().getSigla().toLowerCase().trim();
+    }
+
 }

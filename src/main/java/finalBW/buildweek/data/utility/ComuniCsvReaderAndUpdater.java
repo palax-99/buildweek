@@ -13,6 +13,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static finalBW.buildweek.service.ProvinciaService.PROVINCE_ALIASES;
 
 @Component
 public class ComuniCsvReaderAndUpdater {
@@ -60,13 +64,20 @@ public class ComuniCsvReaderAndUpdater {
         }
 
         List<Comune> comuni = new ArrayList<>();
+        Map<String, Provincia> provinceByName = provinciaService.findAll().stream().collect(Collectors.toMap(
+                provincia -> provincia.getProvinciaNome().toLowerCase().trim(),
+                provincia -> provincia
+        ));
+
         try {
 
 
             for (int i = 0; i < comuniData.size(); i++) {
 
-                comuni.add(new Comune(comuniData.get(i).comuneNome(), provinciaService.findByProvinciaNameWithAlias(comuniData.get(i).provinciaNome())));
-                System.out.println(comuniData.get(i).provinciaNome());
+                String nomeProvincia = comuniData.get(i).provinciaNome().trim();
+                String convertedName = PROVINCE_ALIASES.getOrDefault(nomeProvincia, nomeProvincia);
+                Provincia provincia = provinceByName.get(convertedName.toLowerCase().trim());
+                comuni.add(new Comune(comuniData.get(i).comuneNome(), provincia));
 
             }
         } catch (RuntimeException e) {

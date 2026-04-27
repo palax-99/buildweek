@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Service
 public class ProvinciaService {
-    private static final Map<String, String> PROVINCE_ALIASES = Map.ofEntries(
+    public static final Map<String, String> PROVINCE_ALIASES = Map.ofEntries(
             Map.entry("Ascoli Piceno", "Ascoli-Piceno"),
             Map.entry("Bolzano/Bozen", "Bolzano"),
             Map.entry("Forlì-Cesena", "Forli-Cesena"),
@@ -96,5 +96,8 @@ public class ProvinciaService {
         return provinciaRepository.findByProvinciaNomeIgnoreCase(convertedName).orElseThrow(() -> new CsvReadingAndUpdatingProblemException("Errore nel trovare questa provincia: " + provinciaName));
     }
 
-
+    @Transactional(readOnly = true)
+    public List<Provincia> findAll() {
+        return provinciaRepository.findAll();
+    }
 }
