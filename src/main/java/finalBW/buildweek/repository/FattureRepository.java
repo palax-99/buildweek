@@ -1,9 +1,9 @@
 package finalBW.buildweek.repository;
 
 
-import finalBW.buildweek.entities.Cliente;
-import finalBW.buildweek.entities.Fattura;
-import finalBW.buildweek.entities.StatoFattura;
+import finalBW.buildweek.entity.Cliente;
+import finalBW.buildweek.entity.Fattura;
+import finalBW.buildweek.entity.StatoFattura;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,6 +1,6 @@
 package finalBW.buildweek.repository;
 
-import finalBW.buildweek.entities.StatoFattura;
+import finalBW.buildweek.entity.StatoFattura;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

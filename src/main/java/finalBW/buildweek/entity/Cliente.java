@@ -1,4 +1,4 @@
-package finalBW.buildweek.entities;
+package finalBW.buildweek.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
