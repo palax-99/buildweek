@@ -1,10 +1,9 @@
-package finalBW.buildweek.entities;
+package finalBW.buildweek.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -25,7 +24,7 @@ public class Fattura {
     private LocalDate data;
 
     @Column(nullable = false)
-    private BigDecimal importo;
+    private Double importo;
 
     @Column(nullable = false, unique = true)
     private Long numero;
@@ -38,7 +37,7 @@ public class Fattura {
     @JoinColumn(name = "stato_fattura_id", nullable = false)
     private StatoFattura statoFattura;
 
-    public Fattura(LocalDate data, BigDecimal importo, Long numero,
+    public Fattura(LocalDate data, Double importo, Long numero,
                    Cliente cliente, StatoFattura statoFattura) {
         this.data = data;
         this.importo = importo;

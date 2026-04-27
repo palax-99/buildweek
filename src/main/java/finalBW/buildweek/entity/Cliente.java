@@ -1,11 +1,10 @@
-package finalBW.buildweek.entities;
+package finalBW.buildweek.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -39,7 +38,7 @@ public class Cliente {
     private LocalDate dataUltimoContatto;
 
     @Column(name = "fatturato_annuale", nullable = false)
-    private BigDecimal fatturatoAnnuale;
+    private Double fatturatoAnnuale;
 
     @Column(nullable = false, unique = true)
     private String pec;
@@ -67,7 +66,7 @@ public class Cliente {
     private TipoCliente tipoCliente;
 
     public Cliente(String ragioneSociale, String partitaIva, String email,
-                   BigDecimal fatturatoAnnuale, String pec, String telefono,
+                   Double fatturatoAnnuale, String pec, String telefono,
                    String emailContatto, String nomeContatto, String cognomeContatto,
                    String telefonoContatto, TipoCliente tipoCliente) {
         this.ragioneSociale = ragioneSociale;
