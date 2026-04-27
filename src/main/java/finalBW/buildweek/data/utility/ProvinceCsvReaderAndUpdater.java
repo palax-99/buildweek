@@ -21,10 +21,8 @@ public class ProvinceCsvReaderAndUpdater {
         this.provinciaService = provinciaService;
     }
 
-    // il metodo legge il csv, se non ci sono errori verifica che il numero di
-    // dati contenuto nel csv corrisponda a quello contenuto nel database,
-    // altrimenti azzera il database e salva i nuovi dati
-
+    // il metodo legge il csv, se non ci sono errori inserisce le provincie
+    // non presenti e aggiorna quelle con dati differenti
 
     public void readAndUpdate() {
         String file = "src/main/java/finalBW/buildweek/data/csv/province-italiane.csv";
@@ -50,23 +48,17 @@ public class ProvinceCsvReaderAndUpdater {
             throw new CsvReadingAndUpdatingProblemException("Errore durante la conversione del CSV alla riga " + rowNumber + " - ", e);
         }
 
+        List<Provincia> province = new ArrayList<>();
+        for (int i = 0; i < provinceData.size(); i++) {
 
-        long valoriNelDb = provinciaService.count();
-        if (valoriNelDb != provinceData.size()) {
-            List<Provincia> province = new ArrayList<>();
-            for (int i = 0; i < provinceData.size(); i++) {
+            province.add(new Provincia(provinceData.get(i).sigla(), provinceData.get(i).provinciaNome(), provinceData.get(i).regione()));
 
-                province.add(new Provincia(provinceData.get(i).sigla(), provinceData.get(i).provinciaNome(), provinceData.get(i).regione()));
+        }
+        try {
 
-            }
-
-            try {
-
-                provinciaService.replaceAll(province);
-            } catch (RuntimeException e) {
-                throw new CsvReadingAndUpdatingProblemException("Problema nell'aggiornamento del database", e);
-            }
-
+            provinciaService.syncAll(province);
+        } catch (RuntimeException e) {
+            throw new CsvReadingAndUpdatingProblemException("Problema nell'aggiornamento del database", e);
         }
 
 

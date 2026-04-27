@@ -47,4 +47,22 @@ public class ProvinciaService {
         }
     }
 
+    @Transactional
+    public void syncAll(List<Provincia> province) {
+        for (Provincia provincia : province) {
+            Provincia provinciaFromDb = provinciaRepository.findBySigla(provincia.getSigla()).orElse(null);
+            if (provinciaFromDb == null) {
+                provinciaRepository.save(provincia);
+            } else {
+                boolean diversa = !provinciaFromDb.getProvinciaNome().equals(provincia.getProvinciaNome()) || provinciaFromDb.getRegione() != provincia.getRegione();
+                if (diversa) {
+                    provinciaFromDb.setProvinciaNome(provincia.getProvinciaNome());
+                    provinciaFromDb.setRegione(provincia.getRegione());
+
+                    provinciaRepository.save(provinciaFromDb);
+                }
+            }
+        }
+    }
+
 }
