@@ -15,7 +15,7 @@ public class GeoDataRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("Applicazione avviata!");
-        provinceCsvReaderAndUpdater.read();
+        provinceCsvReaderAndUpdater.readAndUpdate();
 
     }
 }

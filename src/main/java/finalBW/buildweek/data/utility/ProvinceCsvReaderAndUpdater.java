@@ -2,7 +2,7 @@ package finalBW.buildweek.data.utility;
 
 import finalBW.buildweek.entity.Provincia;
 import finalBW.buildweek.enumeration.Regione;
-import finalBW.buildweek.exception.CsvReadingProblemException;
+import finalBW.buildweek.exception.CsvReadingAndUpdatingProblemException;
 import finalBW.buildweek.service.ProvinciaService;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +26,7 @@ public class ProvinceCsvReaderAndUpdater {
     // altrimenti azzera il database e salva i nuovi dati
 
 
-    public void read() {
+    public void readAndUpdate() {
         String file = "src/main/java/finalBW/buildweek/data/csv/province-italiane.csv";
         String row;
         int rowNumber = 1;
@@ -38,16 +38,16 @@ public class ProvinceCsvReaderAndUpdater {
                 String[] valori = row.split(";");
                 rowNumber += 1;
                 if (valori.length < 3) {
-                    throw new CsvReadingProblemException("Riga CSV non valida alla riga " + rowNumber + ": " + row);
+                    throw new CsvReadingAndUpdatingProblemException("Riga CSV non valida alla riga " + rowNumber + ": " + row);
                 }
                 provinceData.add(new ProvinceCsvRecord(valori[0].trim(), valori[1].trim(), Regione.fromName(valori[2].trim())));
             }
-        } catch (CsvReadingProblemException e) {
+        } catch (CsvReadingAndUpdatingProblemException e) {
             throw e;
         } catch (IOException e) {
-            throw new CsvReadingProblemException("Lettura del file csv fallita ", e);
+            throw new CsvReadingAndUpdatingProblemException("Lettura del file csv fallita ", e);
         } catch (RuntimeException e) {
-            throw new CsvReadingProblemException("Errore durante la conversione del CSV alla riga " + rowNumber + " - ", e);
+            throw new CsvReadingAndUpdatingProblemException("Errore durante la conversione del CSV alla riga " + rowNumber + " - ", e);
         }
 
 
@@ -60,7 +60,12 @@ public class ProvinceCsvReaderAndUpdater {
 
             }
 
-            provinciaService.replaceAll(province);
+            try {
+
+                provinciaService.replaceAll(province);
+            } catch (RuntimeException e) {
+                throw new CsvReadingAndUpdatingProblemException("Problema nell'aggiornamento del database", e);
+            }
 
         }
 
