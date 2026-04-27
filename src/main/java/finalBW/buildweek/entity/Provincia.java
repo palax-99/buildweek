@@ -16,7 +16,7 @@ public class Provincia {
 
     @NotBlank(message = "La sigla è obbligatoria")
     @Size(min = 2, max = 5, message = "La sigla deve avere fra 2 e 5 caratteri")
-    @Column(name = "sigla", nullable = false)
+    @Column(name = "sigla", nullable = false, unique = true)
     private String sigla;
 
     @NotBlank(message = "Il nome della provincia è obbligatorio")
@@ -33,6 +33,9 @@ public class Provincia {
         this.sigla = sigla;
         this.provinciaNome = provinciaNome;
         this.regione = regione;
+    }
+
+    protected Provincia() {
     }
 
     public Long getProvinciaId() {
