@@ -9,5 +9,5 @@ public interface UtenteRepository extends JpaRepository<Utente, Long> {
 
     boolean existsByUsername(String username);
 
-    // Optional<Ruolo> findByDenominazione(String denominazione); chiedo per utente subito user
+
 }
