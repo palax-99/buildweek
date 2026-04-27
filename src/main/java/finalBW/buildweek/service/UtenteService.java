@@ -52,4 +52,10 @@ public class UtenteService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         return uRep.findAll(pageable);
     }
+
+    public Utente findById(long id) {
+        return uRep.findById(id)
+                .orElseThrow(() -> new RuntimeException("Dipendente con id " + id + " non trovato"));
+    }
 }
+

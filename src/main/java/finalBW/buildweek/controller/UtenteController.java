@@ -33,5 +33,8 @@ public class UtenteController {
         return uService.save(body);
     }
 
-
+    @GetMapping("/{utenteId}")
+    public Utente getById(@PathVariable long utenteId) {
+        return this.uService.findById(utenteId);  // FACCIO DTO RISPOSTA SE VOGLIO DIVERSO
+    }
 }
