@@ -1,14 +1,29 @@
 package finalBW.buildweek.service;
 
 import finalBW.buildweek.entity.Provincia;
+import finalBW.buildweek.exception.CsvReadingAndUpdatingProblemException;
 import finalBW.buildweek.repository.ProvinciaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProvinciaService {
+    private static final Map<String, String> PROVINCE_ALIASES = Map.ofEntries(
+            Map.entry("Ascoli Piceno", "Ascoli-Piceno"),
+            Map.entry("Bolzano/Bozen", "Bolzano"),
+            Map.entry("Forlì-Cesena", "Forli-Cesena"),
+            Map.entry("La Spezia", "La-Spezia"),
+            Map.entry("Monza e della Brianza", "Monza-Brianza"),
+            Map.entry("Pesaro e Urbino", "Pesaro-Urbino"),
+            Map.entry("Reggio Calabria", "Reggio-Calabria"),
+            Map.entry("Reggio nell'Emilia", "Reggio-Emilia"),
+            Map.entry("Valle d'Aosta/Vallée d'Aoste", "Aosta"),
+            Map.entry("Verbano-Cusio-Ossola", "Verbania"),
+            Map.entry("Vibo Valentia", "Vibo-Valentia")
+    );
     private final ProvinciaRepository provinciaRepository;
 
     public ProvinciaService(ProvinciaRepository provinciaRepository) {
@@ -64,5 +79,22 @@ public class ProvinciaService {
             }
         }
     }
+
+    @Transactional(readOnly = true)
+    public Provincia findByProvinciaNomeIgnoreCase(String nome) {
+        return provinciaRepository.findByProvinciaNomeIgnoreCase(nome).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public Provincia findBySigla(String sigla) {
+        return provinciaRepository.findBySigla(sigla).orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public Provincia findByProvinciaNameWithAlias(String provinciaName) {
+        String convertedName = PROVINCE_ALIASES.getOrDefault(provinciaName.trim(), provinciaName.trim());
+        return provinciaRepository.findByProvinciaNomeIgnoreCase(convertedName).orElseThrow(() -> new CsvReadingAndUpdatingProblemException("Errore nel trovare questa provincia: " + provinciaName));
+    }
+
 
 }
