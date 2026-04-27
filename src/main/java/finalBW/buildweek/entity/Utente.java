@@ -130,5 +130,26 @@ public class Utente {
         this.avatar = avatar;
     }
 
-    // setter per ruoli?
+    public void setRuoli(List<Ruolo> ruoli) {
+        if (ruoli == null || ruoli.isEmpty()) { // vogliamo o non vogliamo che possa nascere senza ruoli? cosi tolgo empty
+            throw new IllegalArgumentException("Assegna un ruolo");
+        }
+
+        this.ruoli = ruoli;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Utente{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+
+                ", nome='" + nome + '\'' +
+                ", cognome='" + cognome + '\'' +
+
+                ", ruoli=" + ruoli +
+                '}';
+    }
 }
