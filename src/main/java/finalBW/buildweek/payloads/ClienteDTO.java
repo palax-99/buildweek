@@ -1,6 +1,6 @@
 package finalBW.buildweek.payloads;
 
-import finalBW.buildweek.entity.TipoCliente;
+import finalBW.buildweek.enumeration.TipoCliente;
 import jakarta.validation.constraints.*;
 
 public record ClienteDTO(

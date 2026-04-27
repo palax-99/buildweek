@@ -1,4 +1,4 @@
-package finalBW.buildweek.entity;
+package finalBW.buildweek.enumeration;
 
 
 public enum TipoCliente {

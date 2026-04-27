@@ -1,7 +1,7 @@
 package finalBW.buildweek.service;
 
 import finalBW.buildweek.entity.Provincia;
-import finalBW.buildweek.exception.CsvReadingAndUpdatingProblemException;
+import finalBW.buildweek.exceptions.CsvReadingAndUpdatingProblemException;
 import finalBW.buildweek.repository.ProvinciaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

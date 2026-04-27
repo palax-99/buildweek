@@ -3,7 +3,7 @@ package finalBW.buildweek.data.utility;
 import finalBW.buildweek.entity.Comune;
 import finalBW.buildweek.entity.Provincia;
 import finalBW.buildweek.enumeration.Regione;
-import finalBW.buildweek.exception.CsvReadingAndUpdatingProblemException;
+import finalBW.buildweek.exceptions.CsvReadingAndUpdatingProblemException;
 import finalBW.buildweek.service.ComuneService;
 import finalBW.buildweek.service.ProvinciaService;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package finalBW.buildweek.exception;
+package finalBW.buildweek.exceptions;
 
 public class CsvReadingAndUpdatingProblemException extends RuntimeException {
     public CsvReadingAndUpdatingProblemException(String message) {

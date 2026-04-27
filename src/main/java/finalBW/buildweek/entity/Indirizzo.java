@@ -1,6 +1,6 @@
 package finalBW.buildweek.entity;
 
-import finalBW.buildweek.entities.Cliente;
+
 import finalBW.buildweek.enumeration.TipoSede;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

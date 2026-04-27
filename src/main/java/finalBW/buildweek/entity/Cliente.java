@@ -2,6 +2,7 @@ package finalBW.buildweek.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import finalBW.buildweek.enumeration.TipoCliente;
 import jakarta.persistence.*;
 import lombok.*;
 
