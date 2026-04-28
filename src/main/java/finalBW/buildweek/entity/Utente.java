@@ -3,6 +3,7 @@ package finalBW.buildweek.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,6 +26,7 @@ public class Utente implements UserDetails {
     @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false, unique = true)
+    @Email
     private String email;
     @JsonIgnore
     @Column(nullable = false)
