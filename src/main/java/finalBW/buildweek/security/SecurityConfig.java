@@ -41,6 +41,8 @@ public class SecurityConfig {
 
                 .requestMatchers("/auth/**", "/error").permitAll()
 
+                .requestMatchers(HttpMethod.POST, "/utenti").permitAll()
+
                 .requestMatchers(HttpMethod.GET,
                         "/clienti/**",
                         "/fatture/**",
@@ -52,7 +54,6 @@ public class SecurityConfig {
                 )
                 .hasAnyAuthority("USER", "ADMIN", "SUPER_ADMIN")
 
-                .requestMatchers(HttpMethod.POST, "/utenti").permitAll() // RIGUARDO POI
                 .requestMatchers(HttpMethod.POST, "/clienti/**")
                 .hasAnyAuthority("USER", "ADMIN", "SUPER_ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/utenti/*/admin")
