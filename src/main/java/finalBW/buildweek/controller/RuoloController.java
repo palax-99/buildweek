@@ -1,7 +1,7 @@
 package finalBW.buildweek.controller;
 
 import finalBW.buildweek.entity.Ruolo;
-import finalBW.buildweek.payloads.NuovoRuoloDTO;
+import finalBW.buildweek.payload.NuovoRuoloDTO;
 import finalBW.buildweek.service.RuoloService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

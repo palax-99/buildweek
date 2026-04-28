@@ -3,26 +3,16 @@ package finalBW.buildweek.repository;
 
 import finalBW.buildweek.entity.Cliente;
 import finalBW.buildweek.entity.Fattura;
-import finalBW.buildweek.entity.StatoFattura;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-
 @Repository
-public interface FattureRepository extends JpaRepository<Fattura, Long> {
+public interface FattureRepository extends JpaRepository<Fattura, Long>, JpaSpecificationExecutor<Fattura> {
+    // Anche qui aggiungo JpaSpecificationExecutor per i filtri dinamici sulle fatture
 
-    Page<Fattura> findByCliente(Cliente cliente, Pageable pageable);
-
-    Page<Fattura> findByStatoFattura(StatoFattura statoFattura, Pageable pageable);
-
-    Page<Fattura> findByData(LocalDate data, Pageable pageable);
-
-    Page<Fattura> findByDataBetween(LocalDate inizio, LocalDate fine, Pageable pageable);
-
-    Page<Fattura> findByImportoBetween(Double min, Double max, Pageable pageable);
-
+    // Questo serve per cancellare in massa tutte le fatture di un cliente
+    // quando elimino il cliente (perche la relazione e unidirezionale e quindi
+    // il cascade non lo posso mettere sulla collezione, devo gestirlo io a mano)
     void deleteByCliente(Cliente cliente);
 }

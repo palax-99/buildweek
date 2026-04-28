@@ -1,7 +1,7 @@
 package finalBW.buildweek.service;
 
 import finalBW.buildweek.entity.Ruolo;
-import finalBW.buildweek.payloads.NuovoRuoloDTO;
+import finalBW.buildweek.payload.NuovoRuoloDTO;
 import finalBW.buildweek.repository.RuoloRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
