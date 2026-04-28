@@ -1,4 +1,4 @@
-package finalBW.buildweek.payloads;
+package finalBW.buildweek.payload;
 
 import finalBW.buildweek.enumeration.TipoCliente;
 import jakarta.validation.constraints.*;

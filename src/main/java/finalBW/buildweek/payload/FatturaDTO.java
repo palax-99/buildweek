@@ -1,4 +1,4 @@
-package finalBW.buildweek.payloads;
+package finalBW.buildweek.payload;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;

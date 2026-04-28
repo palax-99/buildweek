@@ -8,8 +8,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -43,6 +41,8 @@ public class SecurityConfig {
 
                 .requestMatchers("/auth/**", "/error").permitAll()
 
+                .requestMatchers(HttpMethod.POST, "/utenti").permitAll()
+
                 .requestMatchers(HttpMethod.GET,
                         "/clienti/**",
                         "/fatture/**",
@@ -50,10 +50,14 @@ public class SecurityConfig {
                         "/comuni/**",
                         "/province/**",
                         "/stati-fattura/**"
-                ).hasAnyAuthority("USER", "ADMIN")
+
+                )
+                .hasAnyAuthority("USER", "ADMIN", "SUPER_ADMIN")
 
                 .requestMatchers(HttpMethod.POST, "/clienti/**")
-                .hasAnyAuthority("USER", "ADMIN")
+                .hasAnyAuthority("USER", "ADMIN", "SUPER_ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/utenti/*/admin")
+                .hasAuthority("SUPER_ADMIN")
 
                 .requestMatchers(
                         "/clienti/**",
@@ -64,8 +68,8 @@ public class SecurityConfig {
                         "/stati-fattura/**",
                         "/utenti/**",
                         "/ruoli/**"
-                ).hasAuthority("ADMIN")
-
+                )
+                .hasAnyAuthority("ADMIN", "SUPER_ADMIN")
                 .anyRequest().authenticated()
         );
 
@@ -74,8 +78,4 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
-    @Bean
-    public PasswordEncoder getBCrypt() {
-        return new BCryptPasswordEncoder(12);
-    }
 }

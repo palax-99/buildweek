@@ -1,4 +1,4 @@
-package finalBW.buildweek.payloads;
+package finalBW.buildweek.payload;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
