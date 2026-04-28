@@ -37,4 +37,10 @@ public class UtenteController {
     public Utente getById(@PathVariable long utenteId) {
         return this.uService.findById(utenteId);  // FACCIO DTO RISPOSTA SE VOGLIO DIVERSO
     }
+
+
+    @PatchMapping("/{utenteId}/admin")
+    public Utente addAdminRole(@PathVariable long utenteId) {
+        return uService.addAdminRole(utenteId);
+    }
 }

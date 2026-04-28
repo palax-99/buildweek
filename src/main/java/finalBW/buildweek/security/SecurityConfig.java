@@ -48,10 +48,15 @@ public class SecurityConfig {
                         "/comuni/**",
                         "/province/**",
                         "/stati-fattura/**"
-                ).hasAnyAuthority("USER", "ADMIN")
-                .requestMatchers(HttpMethod.POST, "/utenti").permitAll() // se no non riescono a registrarsi
+
+                )
+                .hasAnyAuthority("USER", "ADMIN", "SUPER_ADMIN")
+
+                .requestMatchers(HttpMethod.POST, "/utenti").permitAll() // RIGUARDO POI
                 .requestMatchers(HttpMethod.POST, "/clienti/**")
-                .hasAnyAuthority("USER", "ADMIN")
+                .hasAnyAuthority("USER", "ADMIN", "SUPER_ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/utenti/*/admin")
+                .hasAuthority("SUPER_ADMIN")
 
                 .requestMatchers(
                         "/clienti/**",
@@ -62,8 +67,8 @@ public class SecurityConfig {
                         "/stati-fattura/**",
                         "/utenti/**",
                         "/ruoli/**"
-                ).hasAuthority("ADMIN")
-
+                )
+                .hasAnyAuthority("ADMIN", "SUPER_ADMIN")
                 .anyRequest().authenticated()
         );
 

@@ -1,5 +1,7 @@
 package finalBW.buildweek.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import finalBW.buildweek.entity.Ruolo;
 import finalBW.buildweek.entity.Utente;
 import finalBW.buildweek.exceptions.UnauthorizedException;
@@ -12,6 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Map;
 
 @Service
 public class UtenteService {
@@ -20,7 +26,6 @@ public class UtenteService {
     private final RuoloRepository rRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UtenteService(UtenteRepository uRep, RuoloRepository rRepository, PasswordEncoder passwordEncoder) {
         this.uRep = uRep;
         this.rRepository = rRepository;
         this.passwordEncoder = passwordEncoder;
@@ -65,5 +70,19 @@ public class UtenteService {
     public Utente findByEmail(String email) {
         return uRep.findByEmail(email)
                 .orElseThrow(() -> new UnauthorizedException("Email o password non corretti"));
+    }
+
+
+    public Utente addAdminRole(long utenteId) {
+        Utente utente = this.findById(utenteId);
+
+        Ruolo admin = rRepository.findByDenominazione("ADMIN")
+                .orElseThrow(() -> new RuntimeException("Ruolo ADMIN non trovato"));
+
+        if (!utente.getRuoli().contains(admin)) {
+            utente.getRuoli().add(admin);
+        }
+
+        return uRep.save(utente);
     }
 }
