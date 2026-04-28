@@ -2,6 +2,7 @@ package finalBW.buildweek.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import finalBW.buildweek.config.EmailSender;
 import finalBW.buildweek.entity.Ruolo;
 import finalBW.buildweek.entity.Utente;
 import finalBW.buildweek.exceptions.UnauthorizedException;
@@ -26,12 +27,14 @@ public class UtenteService {
     private final RuoloRepository rRepository;
     private final PasswordEncoder passwordEncoder;
     private final Cloudinary cloudinaryUploader;
+    private final EmailSender emailSender;
 
-    public UtenteService(UtenteRepository uRep, RuoloRepository rRepository, PasswordEncoder passwordEncoder, Cloudinary cloudinaryUploader) {
+    public UtenteService(UtenteRepository uRep, RuoloRepository rRepository, PasswordEncoder passwordEncoder, Cloudinary cloudinaryUploader, EmailSender emailSender) {
         this.uRep = uRep;
         this.rRepository = rRepository;
         this.passwordEncoder = passwordEncoder;
         this.cloudinaryUploader = cloudinaryUploader;
+        this.emailSender = emailSender;
     }
 
     public Utente save(NuovoUtenteDTO body) {
@@ -57,7 +60,11 @@ public class UtenteService {
 
         nuovoUtente.getRuoli().add(ruoloUser);
 
-        return uRep.save(nuovoUtente);
+        Utente utenteSalvato = uRep.save(nuovoUtente);
+
+        this.emailSender.sendRegistrationEmail(utenteSalvato);
+
+        return utenteSalvato;
     }
 
     public Page<Utente> findAll(int page, int size, String sortBy) {
