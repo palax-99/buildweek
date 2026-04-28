@@ -3,6 +3,7 @@ package finalBW.buildweek.controller;
 import finalBW.buildweek.entity.Ruolo;
 import finalBW.buildweek.entity.Utente;
 import finalBW.buildweek.exceptions.ForbiddenException;
+import finalBW.buildweek.payload.TemporaryPasswordDTO;
 import finalBW.buildweek.service.RuoloService;
 import finalBW.buildweek.service.UtenteService;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Objects;
 
@@ -112,5 +114,35 @@ public class AdminController {
 
     }
 
+    @PatchMapping("/{utenteId}/ruoli/resetpassword")
+    @PreAuthorize("hasAnyAuthority('SUPER_ADMIN')")
+    @ResponseStatus(HttpStatus.OK)
+    public TemporaryPasswordDTO resetPassword(@PathVariable Long utenteId, @AuthenticationPrincipal Utente currentUser) {
+
+        Utente found = utenteService.findById(utenteId);
+
+
+        if (currentUser.getRuoli().stream().anyMatch(r -> r.getDenominazione().equals("SUPER_ADMIN"))) {
+            SecureRandom random = new SecureRandom();
+            StringBuilder password = new StringBuilder();
+            String caratteri = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+=<>?";
+
+            for (int i = 0; i < 12; i++) {
+                int index = random.nextInt(caratteri.length());
+                password.append(caratteri.charAt(index));
+            }
+
+            String tempPassword = password.toString();
+            TemporaryPasswordDTO response = new TemporaryPasswordDTO(tempPassword);
+            utenteService.updatePassword(found, tempPassword);
+
+            return response;
+        }
+        throw new ForbiddenException("Non sei autorizzato a resettare la password");
+    }
+
 
 }
+
+
+
