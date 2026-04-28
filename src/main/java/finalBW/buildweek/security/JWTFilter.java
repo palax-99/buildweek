@@ -71,7 +71,10 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
+        String method = request.getMethod();
 
-        return path.startsWith("/auth") || path.equals("/error");
+        return path.startsWith("/auth")
+                || path.equals("/error")
+                || (path.equals("/utenti") && method.equals("POST")); // se no non riesco a registrare utente all inizio chiede token impossibile da avere
     }
 }

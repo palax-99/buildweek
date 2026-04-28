@@ -49,7 +49,7 @@ public class SecurityConfig {
                         "/province/**",
                         "/stati-fattura/**"
                 ).hasAnyAuthority("USER", "ADMIN")
-
+                .requestMatchers(HttpMethod.POST, "/utenti").permitAll() // se no non riescono a registrarsi
                 .requestMatchers(HttpMethod.POST, "/clienti/**")
                 .hasAnyAuthority("USER", "ADMIN")
 
