@@ -1,0 +1,116 @@
+package finalBW.buildweek.controller;
+
+import finalBW.buildweek.entity.Ruolo;
+import finalBW.buildweek.entity.Utente;
+import finalBW.buildweek.exceptions.ForbiddenException;
+import finalBW.buildweek.service.RuoloService;
+import finalBW.buildweek.service.UtenteService;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Objects;
+
+@RestController
+@RequestMapping("/admin_api")
+public class AdminController {
+    private final UtenteService utenteService;
+    private final RuoloService ruoloService;
+
+    public AdminController(UtenteService utenteService, RuoloService ruoloService) {
+        this.utenteService = utenteService;
+        this.ruoloService = ruoloService;
+    }
+
+    @DeleteMapping("/{utenteId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUtente(@PathVariable Long utenteId, @AuthenticationPrincipal Utente currentUser) {
+        Utente found = utenteService.findById(utenteId);
+        if (currentUser.getRuoli().stream().anyMatch(ruolo -> ruolo.getDenominazione().equals("SUPER_ADMIN"))) {
+            utenteService.deleteUtente(found);
+            return;
+        }
+        boolean isAdmin = found.getRuoli().stream().anyMatch(ruolo -> ruolo.getDenominazione().equals("ADMIN")) || found.getRuoli().stream().anyMatch(ruolo -> ruolo.getDenominazione().equals("SUPER_ADMIN"));
+        if (isAdmin) {
+            throw new ForbiddenException("Non hai l'autorità per eliminare un ADMIN");
+        }
+        utenteService.deleteUtente(found);
+    }
+
+    @PatchMapping("/{utenteId}/ruoli/add")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addRuolo(@PathVariable Long utenteId, @RequestParam String ruolo, @AuthenticationPrincipal Utente currentUser) {
+        ruolo = ruolo.trim().toUpperCase();
+        Utente found = utenteService.findById(utenteId);
+        String finalRuolo = ruolo;
+        if (found.getRuoli().stream().anyMatch(r -> r.getDenominazione().equals(finalRuolo))) {
+            return;
+        }
+
+
+        if (currentUser.getRuoli().stream().anyMatch(r -> r.getDenominazione().equals("SUPER_ADMIN"))) {
+            List<Ruolo> nuoviRuoli = found.getRuoli();
+            Ruolo ruoloDaAggiungere = ruoloService.findByDenominazione(ruolo);
+            if (ruoloDaAggiungere == null) {
+                ruoloDaAggiungere = ruoloService.save(new Ruolo(ruolo));
+            }
+            nuoviRuoli.add(ruoloDaAggiungere);
+            found.setRuoli(nuoviRuoli);
+            utenteService.update(found);
+            return;
+        }
+
+        if (currentUser.getRuoli().stream().anyMatch(r -> r.getDenominazione().equals("ADMIN"))) {
+            if (Objects.equals(ruolo, "ADMIN") || Objects.equals(ruolo, "SUPER_ADMIN"))
+                throw new ForbiddenException("Non hai le autorizzazioni per creare nuovi admin");
+            Ruolo ruoloDaAggiungere = ruoloService.findByDenominazione(ruolo);
+            if (ruoloDaAggiungere == null) {
+                ruoloDaAggiungere = ruoloService.save(new Ruolo(ruolo));
+            }
+            List<Ruolo> nuoviRuoli = found.getRuoli();
+            nuoviRuoli.add(ruoloDaAggiungere);
+            found.setRuoli(nuoviRuoli);
+            utenteService.update(found);
+        }
+
+
+    }
+
+    @PatchMapping("/{utenteId}/ruoli/remove")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeRuolo(@PathVariable Long utenteId, @RequestParam String ruolo, @AuthenticationPrincipal Utente currentUser) {
+        ruolo = ruolo.trim().toUpperCase();
+        Utente found = utenteService.findById(utenteId);
+        String finalRuolo = ruolo;
+        if (found.getRuoli().stream().noneMatch(r -> r.getDenominazione().equals(finalRuolo))) {
+            return;
+        }
+        if (currentUser.getRuoli().stream().anyMatch(r -> r.getDenominazione().equals("SUPER_ADMIN"))) {
+            List<Ruolo> ruoliAttuali = found.getRuoli();
+            String finalRuolo1 = ruolo;
+            ruoliAttuali.removeIf(r -> r.getDenominazione().equals(finalRuolo1));
+            found.setRuoli(ruoliAttuali);
+            utenteService.update(found);
+            return;
+        }
+
+        if (currentUser.getRuoli().stream().anyMatch(r -> r.getDenominazione().equals("ADMIN"))) {
+            if (Objects.equals(ruolo, "ADMIN") || Objects.equals(ruolo, "SUPER_ADMIN"))
+                throw new ForbiddenException("Non hai le autorizzazioni per eliminare il ruolo di admin");
+            List<Ruolo> ruoliAttuali = found.getRuoli();
+            String finalRuolo2 = ruolo;
+            ruoliAttuali.removeIf(r -> r.getDenominazione().equals(finalRuolo2));
+            found.setRuoli(ruoliAttuali);
+            utenteService.update(found);
+        }
+
+
+    }
+
+
+}

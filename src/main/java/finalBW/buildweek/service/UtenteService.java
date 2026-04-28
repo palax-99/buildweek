@@ -57,5 +57,18 @@ public class UtenteService {
         return uRep.findById(id)
                 .orElseThrow(() -> new RuntimeException("Dipendente con id " + id + " non trovato"));
     }
+
+    public void deleteUtente(Long utenteId) {
+        Utente found = findById(utenteId);
+        uRep.delete(found);
+    }
+
+    public void deleteUtente(Utente utente) {
+        uRep.delete(utente);
+    }
+
+    public Utente update(Utente utente) {
+        return uRep.save(utente);
+    }
 }
 
