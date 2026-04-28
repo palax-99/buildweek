@@ -1,6 +1,6 @@
 package finalBW.buildweek.repository;
 
-import finalBW.buildweek.entities.Cliente;
+import finalBW.buildweek.entity.Cliente;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
