@@ -53,7 +53,8 @@ public class SecurityConfig {
 
                 )
                 .hasAnyAuthority("USER", "ADMIN", "SUPER_ADMIN")
-
+                .requestMatchers(HttpMethod.PATCH, "/utenti/me/avatar") // decidiamo se fargli fare solo questo --> se no tolgo il blocco dopo su /utenti a superadmin
+                .authenticated()
                 .requestMatchers(HttpMethod.POST, "/clienti/**")
                 .hasAnyAuthority("USER", "ADMIN", "SUPER_ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/utenti/*/admin")
@@ -66,7 +67,7 @@ public class SecurityConfig {
                         "/comuni/**",
                         "/province/**",
                         "/stati-fattura/**",
-                        "/utenti/**",
+                        "/utenti/**", // --> questo solo per quelli elencanti sotto
                         "/ruoli/**"
                 )
                 .hasAnyAuthority("ADMIN", "SUPER_ADMIN")

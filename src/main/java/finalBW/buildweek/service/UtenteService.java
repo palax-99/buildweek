@@ -76,7 +76,7 @@ public class UtenteService {
     }
 
 
-    public void avatarUpload(MultipartFile file, long utenteId) {
+    public Utente avatarUpload(MultipartFile file, long utenteId) {
         if (file.isEmpty()) {
             throw new RuntimeException("Il file è vuoto");
         }
@@ -91,7 +91,7 @@ public class UtenteService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        return found;
     }
 
 
