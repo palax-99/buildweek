@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/utenti")
@@ -38,6 +39,10 @@ public class UtenteController {
         return this.uService.findById(utenteId);  // FACCIO DTO RISPOSTA SE VOGLIO DIVERSO
     }
 
+    @PatchMapping({"/{utenteId}/avatar"})
+    public void uploadAvatar(@RequestParam("profile_picture") MultipartFile file, @PathVariable long utenteId) {
+        this.uService.avatarUpload(file, utenteId);
+    }
 
     @PatchMapping("/{utenteId}/admin")
     public Utente addAdminRole(@PathVariable long utenteId) {

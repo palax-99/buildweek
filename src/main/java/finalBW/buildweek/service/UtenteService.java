@@ -25,10 +25,13 @@ public class UtenteService {
     private final UtenteRepository uRep;
     private final RuoloRepository rRepository;
     private final PasswordEncoder passwordEncoder;
+    private final Cloudinary cloudinaryUploader;
 
+    public UtenteService(UtenteRepository uRep, RuoloRepository rRepository, PasswordEncoder passwordEncoder, Cloudinary cloudinaryUploader) {
         this.uRep = uRep;
         this.rRepository = rRepository;
         this.passwordEncoder = passwordEncoder;
+        this.cloudinaryUploader = cloudinaryUploader;
     }
 
     public Utente save(NuovoUtenteDTO body) {
@@ -70,6 +73,25 @@ public class UtenteService {
     public Utente findByEmail(String email) {
         return uRep.findByEmail(email)
                 .orElseThrow(() -> new UnauthorizedException("Email o password non corretti"));
+    }
+
+
+    public void avatarUpload(MultipartFile file, long utenteId) {
+        if (file.isEmpty()) {
+            throw new RuntimeException("Il file è vuoto");
+        }
+        Utente found = this.findById(utenteId);
+        try {
+            Map result = cloudinaryUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String avatarUrl = (String) result.get("secure_url");
+            found.setAvatar(avatarUrl);
+            uRep.save(found);
+            System.out.println(avatarUrl);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 
