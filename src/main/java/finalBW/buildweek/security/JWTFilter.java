@@ -1,8 +1,7 @@
 package finalBW.buildweek.security;
 
 import finalBW.buildweek.entity.Utente;
-import finalBW.buildweek.exceptions.UnauthorizedException;
-import finalBW.buildweek.repository.UtenteRepository;
+import finalBW.buildweek.service.UtenteService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,11 +20,11 @@ import java.util.List;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTTools jwtTools;
-    private final UtenteRepository utenteRepository;
+    private final UtenteService utenteService;
 
-    public JWTFilter(JWTTools jwtTools, UtenteRepository utenteRepository) {
+    public JWTFilter(JWTTools jwtTools, UtenteService utenteService) {
         this.jwtTools = jwtTools;
-        this.utenteRepository = utenteRepository;
+        this.utenteService = utenteService;
     }
 
     @Override
@@ -47,8 +46,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
             Long utenteId = jwtTools.extractIdFromToken(token);
 
-            Utente utente = utenteRepository.findById(utenteId)
-                    .orElseThrow(() -> new UnauthorizedException("Utente non trovato."));
+            Utente utente = utenteService.findById(utenteId);
 
             List<SimpleGrantedAuthority> authorities = utente.getRuoli()
                     .stream()
@@ -65,8 +63,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
 
-        } catch (UnauthorizedException ex) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+        } catch (Exception ex) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token non valido oppure utente non autorizzato.");
         }
     }
 
