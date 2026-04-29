@@ -1,6 +1,8 @@
 package finalBW.buildweek.service;
 
 import finalBW.buildweek.entity.Ruolo;
+import finalBW.buildweek.exceptions.NotFoundException;
+import finalBW.buildweek.exceptions.ValidationException;
 import finalBW.buildweek.payload.NuovoRuoloDTO;
 import finalBW.buildweek.repository.RuoloRepository;
 import org.springframework.data.domain.Page;
@@ -20,10 +22,14 @@ public class RuoloService {
 
     public Ruolo save(NuovoRuoloDTO body) {
 
-        String denominazione = body.denominazione().toUpperCase();
+        if (body.denominazione() == null || body.denominazione().isBlank()) {
+            throw new ValidationException("Denominazione ruolo obbligatoria");
+        }
+
+        String denominazione = body.denominazione().trim().toUpperCase();
 
         if (rRepository.existsByDenominazione(denominazione)) {
-            throw new RuntimeException("Il ruolo " + denominazione + " esiste già");
+            throw new ValidationException("Il ruolo " + denominazione + " esiste già");
         }
 
         Ruolo nuovoRuolo = new Ruolo(denominazione);
@@ -38,7 +44,7 @@ public class RuoloService {
 
     public Ruolo findById(long id) {
         return rRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ruolo con id " + id + " non trovato"));
+                .orElseThrow(() -> new NotFoundException("Ruolo con id " + id + " non trovato"));
     }
 
 
@@ -49,10 +55,10 @@ public class RuoloService {
     }
 
 
-     public Ruolo findByDenominazione(String ruolo) {
-        return rRepository.findByDenominazione(ruolo).orElse(null);
+    public Ruolo findByDenominazione(String ruolo) {
+        return rRepository.findByDenominazione(ruolo)
+                .orElseThrow(() -> new NotFoundException("Ruolo " + ruolo + " non trovato"));
     }
-
 
     public Ruolo save(Ruolo ruolo) {
         return rRepository.save(ruolo);

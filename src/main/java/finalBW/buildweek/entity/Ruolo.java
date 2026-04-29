@@ -1,5 +1,6 @@
 package finalBW.buildweek.entity;
 
+import finalBW.buildweek.exceptions.ValidationException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,14 +24,14 @@ public class Ruolo {
     public Ruolo(String denominazione) {
 
         if (denominazione == null || denominazione.isBlank()) {
-            throw new IllegalArgumentException("Campo obbligatoria");
+            throw new ValidationException("Campo obbligatoria");
         }
         this.denominazione = denominazione.toUpperCase();     // se qualcuno mette tipo aDmIn ecc
     }
 
     public void setDenominazione(String denominazione) {
         if (denominazione == null || denominazione.isBlank()) {
-            throw new IllegalArgumentException("Campo obbligatoria");
+            throw new ValidationException("Campo obbligatoria");
         }
 
         this.denominazione = denominazione.toUpperCase();

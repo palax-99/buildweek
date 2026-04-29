@@ -2,6 +2,7 @@ package finalBW.buildweek.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import finalBW.buildweek.exceptions.ValidationException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
@@ -45,36 +46,36 @@ public class Utente implements UserDetails {
     public Utente(String username, String email, String password, String nome, String cognome) {
 
         if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Username obbligatorio");
+            throw new ValidationException("Username obbligatorio");
         }
         if (username.length() < 3) {
-            throw new IllegalArgumentException("Username troppo corto");
+            throw new ValidationException("Username troppo corto");
         }
         this.username = username;
 
         if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email obbligatoria");
+            throw new ValidationException("Email obbligatoria");
         }
         if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
-            throw new IllegalArgumentException("Formato email non valido");
+            throw new ValidationException("Formato email non valido");
         }
         this.email = email;
 
         if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Password obbligatoria");
+            throw new ValidationException("Password obbligatoria");
         }
         if (password.length() < 6) {
-            throw new IllegalArgumentException("La password deve contenere almeno 6 caratteri");
+            throw new ValidationException("La password deve contenere almeno 6 caratteri");
         }
         this.password = password;
 
         if (nome == null || nome.isBlank()) {
-            throw new IllegalArgumentException("Nome obbligatorio");
+            throw new ValidationException("Nome obbligatorio");
         }
         this.nome = nome;
 
         if (cognome == null || cognome.isBlank()) {
-            throw new IllegalArgumentException("Cognome obbligatorio");
+            throw new ValidationException("Cognome obbligatorio");
         }
         this.cognome = cognome;
 
@@ -84,30 +85,30 @@ public class Utente implements UserDetails {
 
     public void setUsername(String username) {
         if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Username obbligatorio");
+            throw new ValidationException("Username obbligatorio");
         }
         if (username.length() < 3) {
-            throw new IllegalArgumentException("Username troppo corto");
+            throw new ValidationException("Username troppo corto");
         }
         this.username = username;
     }
 
     public void setEmail(String email) {
         if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email obbligatoria");
+            throw new ValidationException("Email obbligatoria");
         }
         if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
-            throw new IllegalArgumentException("Formato email non valido");
+            throw new ValidationException("Formato email non valido");
         }
         this.email = email;
     }
 
     public void setPassword(String password) {
         if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Password obbligatoria");
+            throw new ValidationException("Password obbligatoria");
         }
         if (password.length() < 6) {
-            throw new IllegalArgumentException("La password deve contenere almeno 6 caratteri");
+            throw new ValidationException("La password deve contenere almeno 6 caratteri");
         }
         this.password = password;
     }
@@ -115,7 +116,7 @@ public class Utente implements UserDetails {
 
     public void setNome(String nome) {
         if (nome == null || nome.isBlank()) {
-            throw new IllegalArgumentException("Nome obbligatorio");
+            throw new ValidationException("Nome obbligatorio");
         }
         this.nome = nome;
         this.avatar = "https://ui-avatars.com/api/?name=" + this.nome + "+" + this.cognome;
@@ -123,7 +124,7 @@ public class Utente implements UserDetails {
 
     public void setCognome(String cognome) {
         if (cognome == null || cognome.isBlank()) {
-            throw new IllegalArgumentException("Cognome obbligatorio");
+            throw new ValidationException("Cognome obbligatorio");
         }
         this.cognome = cognome;
         this.avatar = "https://ui-avatars.com/api/?name=" + this.nome + "+" + this.cognome;
@@ -131,14 +132,14 @@ public class Utente implements UserDetails {
 
     public void setAvatar(String avatar) {
         if (avatar == null || avatar.isBlank()) {
-            throw new IllegalArgumentException("Avatar obbligatorio");
+            throw new ValidationException("Avatar obbligatorio");
         }
         this.avatar = avatar;
     }
 
     public void setRuoli(List<Ruolo> ruoli) {
         if (ruoli == null || ruoli.isEmpty()) { // vogliamo o non vogliamo che possa nascere senza ruoli? cosi tolgo empty
-            throw new IllegalArgumentException("Assegna un ruolo");
+            throw new ValidationException("Assegna un ruolo");
         }
 
         this.ruoli = ruoli;
