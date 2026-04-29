@@ -73,8 +73,11 @@ public class JWTFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         String method = request.getMethod();
 
-        return path.startsWith("/auth")
+        return method.equals("OPTIONS")   // PER CORS
+                || path.startsWith("/auth")
                 || path.equals("/error")
-                || (path.equals("/utenti") && method.equals("POST")); // se no non riesco a registrare utente all inizio chiede token impossibile da avere
+                || (path.equals("/utenti") && method.equals("POST"));
     }
+
+
 }

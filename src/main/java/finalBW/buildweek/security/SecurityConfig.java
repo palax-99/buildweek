@@ -10,6 +10,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +45,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(requests -> requests
 
                 .requestMatchers("/auth/**", "/error").permitAll()
-
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/utenti").permitAll()
 
                 .requestMatchers(HttpMethod.GET,
@@ -61,6 +66,7 @@ public class SecurityConfig {
                 .hasAuthority("SUPER_ADMIN")
 
                 .requestMatchers(
+
                         "/clienti/**",
                         "/fatture/**",
                         "/indirizzi/**",
@@ -77,6 +83,38 @@ public class SecurityConfig {
         httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
+    }
+
+    // PER PROBLEMI DI CORS FRONT END
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://localhost:5174"
+        ));
+
+        configuration.setAllowedMethods(List.of(
+                "GET",
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE",
+                "OPTIONS"
+        ));
+
+        configuration.setAllowedHeaders(List.of(
+                "Authorization",
+                "Content-Type"
+        ));
+
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 
 }
