@@ -65,7 +65,11 @@ public class UtenteService {
 
         Utente utenteSalvato = uRep.save(nuovoUtente);
 
-        this.emailSender.sendRegistrationEmail(utenteSalvato);
+        try {
+            this.emailSender.sendRegistrationEmail(utenteSalvato);
+        } catch (InternalServerException e) {
+            System.out.println("Email di registrazione non inviata: " + e.getMessage());
+        }
 
         return utenteSalvato;
     }

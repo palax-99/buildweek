@@ -37,8 +37,23 @@ public class EmailSender {
                 .queryString("text", message)
                 .asJson();
 
-        if (response.getStatus() >= 400) {
+        if (response.getStatus() >= 400) { // le prende tutte
             throw new InternalServerException("Errore invio email: " + response.getBody());
+        }
+    }
+
+
+    public void sendCustomEmail(String to, String subject, String text) {
+        HttpResponse<JsonNode> response = Unirest.post(this.baseUrl + "/v3/" + this.domainName + "/messages")
+                .basicAuth("api", this.apiKey)
+                .queryString("from", this.from)
+                .queryString("to", to)
+                .queryString("subject", subject)
+                .queryString("text", text)
+                .asJson();
+
+        if (response.getStatus() >= 400) {
+            throw new InternalServerException("Errore durante l'invio dell'email");
         }
     }
 }

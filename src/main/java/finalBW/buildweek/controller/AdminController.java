@@ -1,11 +1,16 @@
 package finalBW.buildweek.controller;
 
+import finalBW.buildweek.config.EmailSender;
+import finalBW.buildweek.entity.Cliente;
 import finalBW.buildweek.entity.Ruolo;
 import finalBW.buildweek.entity.Utente;
 import finalBW.buildweek.exceptions.ForbiddenException;
+import finalBW.buildweek.payload.EmailPersonalizzataDTO;
 import finalBW.buildweek.payload.TemporaryPasswordDTO;
+import finalBW.buildweek.service.ClientiService;
 import finalBW.buildweek.service.RuoloService;
 import finalBW.buildweek.service.UtenteService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,10 +25,14 @@ import java.util.Objects;
 public class AdminController {
     private final UtenteService utenteService;
     private final RuoloService ruoloService;
+    private final EmailSender emailSender;
+    private final ClientiService cService;
 
-    public AdminController(UtenteService utenteService, RuoloService ruoloService) {
+    public AdminController(UtenteService utenteService, RuoloService ruoloService, EmailSender emailSender, ClientiService cService) {
         this.utenteService = utenteService;
         this.ruoloService = ruoloService;
+        this.emailSender = emailSender;
+        this.cService = cService;
     }
 
     @DeleteMapping("/{utenteId}")
@@ -141,6 +150,22 @@ public class AdminController {
         throw new ForbiddenException("Non sei autorizzato a resettare la password");
     }
 
+
+    @PostMapping("/clienti/{clienteId}/email")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void sendEmailToCliente(
+            @PathVariable Long clienteId,
+            @RequestBody @Valid EmailPersonalizzataDTO body) {
+
+        Cliente cliente = cService.findById(clienteId);
+
+        emailSender.sendCustomEmail(
+                cliente.getEmail(),
+                body.subject(),
+                body.text()
+        );
+    }
 
 }
 
