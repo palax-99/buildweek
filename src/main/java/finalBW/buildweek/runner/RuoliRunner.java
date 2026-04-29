@@ -5,10 +5,12 @@ import finalBW.buildweek.entity.Utente;
 import finalBW.buildweek.repository.RuoloRepository;
 import finalBW.buildweek.repository.UtenteRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
+@Order(2)
 public class RuoliRunner implements CommandLineRunner {
 
     private final RuoloRepository ruoloRepository;
@@ -23,6 +25,8 @@ public class RuoliRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+
+        System.out.println("Generazione ruoli: SuperAdmin, Admin, User...");
 
         Ruolo user = ruoloRepository.findByDenominazione("USER")
                 .orElseGet(() -> ruoloRepository.save(new Ruolo("USER")));
@@ -39,7 +43,7 @@ public class RuoliRunner implements CommandLineRunner {
                     "superadmin@email.com",
                     passEncoder.encode("superadmin123"),
                     "Super",
-                    "Admin"
+                    "superAdmin"
             );
 
             superAdmin.getRuoli().add(user);
@@ -48,5 +52,36 @@ public class RuoliRunner implements CommandLineRunner {
 
             uRep.save(superAdmin);
         }
+
+        if (!uRep.existsByEmail("utentebase@email.com")) {
+            Utente utenteBase = new Utente(
+                    "utenteBase",
+                    "utentebase@email.com",
+                    passEncoder.encode("utentebase!"),
+                    "UtenteB",
+                    "Base"
+            );
+
+            utenteBase.getRuoli().add(user);
+
+            uRep.save(utenteBase);
+        }
+
+        if (!uRep.existsByEmail("utenteadmin@email.com")) {
+            Utente utenteAdmin = new Utente(
+                    "utenteAdmin",
+                    "utenteadmin@email.com",
+                    passEncoder.encode("utenteadmin!"),
+                    "UtenteA",
+                    "Admin"
+            );
+
+            utenteAdmin.getRuoli().add(user);
+            utenteAdmin.getRuoli().add(admin);
+
+            uRep.save(utenteAdmin);
+        }
+
+        System.out.println("Ruoli generati");
     }
 }

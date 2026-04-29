@@ -14,8 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -165,4 +167,14 @@ public class FattureService {
         Fattura trovata = this.findById(fatturaId);
         this.fattureRepository.delete(trovata);
     }
+
+    public Long getUltimoNumeroFattura() {
+        return fattureRepository.findMaxNumero();
+    }
+
+    @Transactional
+    public List<Fattura> salvaFatture(List<Fattura> fatture) {
+        return fattureRepository.saveAll(fatture);
+    }
+
 }

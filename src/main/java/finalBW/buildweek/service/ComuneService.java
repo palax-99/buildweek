@@ -2,6 +2,7 @@ package finalBW.buildweek.service;
 
 import finalBW.buildweek.entity.Comune;
 import finalBW.buildweek.repository.ComuneRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,4 +46,22 @@ public class ComuneService {
         return comune.getComuneNome().toLowerCase().trim() + "|" + comune.getProvincia().getSigla().toLowerCase().trim();
     }
 
+    public long count() {
+        return comuneRepository.count();
+    }
+
+    public Comune getComuneRandom(int randomIndex) {
+
+        long count = comuneRepository.count();
+
+        if (count == 0) {
+            throw new RuntimeException("Nessun comune presente nel database");
+        }
+
+        return comuneRepository.findAll(PageRequest.of(randomIndex, 1))
+                .getContent()
+                .get(0);
+    }
 }
+
+

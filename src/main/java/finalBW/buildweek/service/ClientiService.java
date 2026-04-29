@@ -202,4 +202,12 @@ public class ClientiService {
 
         log.info("Cliente con id " + clienteId + " e tutte le sue fatture cancellati");
     }
+
+    public Cliente saveCliente(Cliente cliente) {
+        return clientiRepository.save(cliente);
+    }
+
+    public long count() {
+        return clientiRepository.count();
+    }
 }
