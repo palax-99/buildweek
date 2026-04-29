@@ -1,6 +1,7 @@
 package finalBW.buildweek.controller;
 
 import finalBW.buildweek.entity.Utente;
+import finalBW.buildweek.payload.AssegnaRuoloDTO;
 import finalBW.buildweek.payload.NuovoUtenteDTO;
 import finalBW.buildweek.service.UtenteService;
 import jakarta.validation.Valid;
@@ -23,6 +24,7 @@ public class UtenteController {
 
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
     public Page<Utente> findAll(@RequestParam(defaultValue = "0") int page,
                                 @RequestParam(defaultValue = "5") int size,
                                 @RequestParam(defaultValue = "cognome") String sortBy) {
@@ -37,8 +39,10 @@ public class UtenteController {
     }
 
     @GetMapping("/{utenteId}")
+    @PreAuthorize("#utenteId == authentication.principal.id or hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
+    // permetto a user di vedere se stesso con principal
     public Utente getById(@PathVariable long utenteId) {
-        return this.uService.findById(utenteId);  // FACCIO DTO RISPOSTA SE VOGLIO DIVERSO
+        return this.uService.findById(utenteId);
     }
 
     @PatchMapping("/me/avatar")
@@ -49,14 +53,14 @@ public class UtenteController {
         return this.uService.avatarUpload(file, utente.getId());
     }
 
-    @PatchMapping("/{utenteId}/admin")
-    // @PreAuthorize("hasAnyAuthory('ADMIN', 'SUPER_ADMIN')") ----> Ti
-    public Utente addAdminRole(@PathVariable long utenteId) {
-        return uService.addAdminRole(utenteId);
+    @PatchMapping("/{utenteId}/ruoli")
+    @PreAuthorize("hasAuthority('SUPER_ADMIN')")
+    public Utente addRole(
+            @PathVariable long utenteId,
+            @RequestBody @Valid AssegnaRuoloDTO body) {
+
+        return uService.addRole(utenteId, body.ruolo());
     }
 
 
-    // --> Verifico ruoli .. GET --> clienti totali, get clienti per id , salva cliente. Inietto service di cliente --> DA FARE SU CLINETI CONTROLLER PERO'
-
-    // MAIL --> lun/mar/mer ... mercoledi' mattina repo
 }

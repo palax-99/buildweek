@@ -5,7 +5,10 @@ import com.cloudinary.utils.ObjectUtils;
 import finalBW.buildweek.config.EmailSender;
 import finalBW.buildweek.entity.Ruolo;
 import finalBW.buildweek.entity.Utente;
+import finalBW.buildweek.exceptions.InternalServerException;
+import finalBW.buildweek.exceptions.NotFoundException;
 import finalBW.buildweek.exceptions.UnauthorizedException;
+import finalBW.buildweek.exceptions.ValidationException;
 import finalBW.buildweek.payload.NuovoUtenteDTO;
 import finalBW.buildweek.repository.RuoloRepository;
 import finalBW.buildweek.repository.UtenteRepository;
@@ -40,11 +43,11 @@ public class UtenteService {
     public Utente save(NuovoUtenteDTO body) {
 
         if (uRep.existsByEmail(body.email())) {
-            throw new RuntimeException("L'email " + body.email() + " è già in uso");
+            throw new ValidationException("L'email " + body.email() + " è già in uso");
         }
 
         if (uRep.existsByUsername(body.username())) {
-            throw new RuntimeException("Username " + body.username() + " già utilizzato");
+            throw new ValidationException("Username " + body.username() + " già utilizzato");
         }
 
         Utente nuovoUtente = new Utente(
@@ -56,7 +59,7 @@ public class UtenteService {
         );
 
         Ruolo ruoloUser = rRepository.findByDenominazione("USER")
-                .orElseThrow(() -> new RuntimeException("Ruolo USER non trovato"));
+                .orElseThrow(() -> new NotFoundException("Ruolo USER non trovato"));
 
         nuovoUtente.getRuoli().add(ruoloUser);
 
@@ -74,7 +77,7 @@ public class UtenteService {
 
     public Utente findById(long id) {
         return uRep.findById(id)
-                .orElseThrow(() -> new RuntimeException("Utente con id " + id + " non trovato"));
+                .orElseThrow(() -> new NotFoundException("Utente con id " + id + " non trovato"));
     }
 
     public Utente findByEmail(String email) {
@@ -85,7 +88,7 @@ public class UtenteService {
 
     public Utente avatarUpload(MultipartFile file, long utenteId) {
         if (file.isEmpty()) {
-            throw new RuntimeException("Il file è vuoto");
+            throw new ValidationException("Il file è vuoto");
         }
         Utente found = this.findById(utenteId);
         try {
@@ -96,20 +99,21 @@ public class UtenteService {
             System.out.println(avatarUrl);
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new InternalServerException("Errore durante il caricamento dell avatar");
         }
         return found;
     }
 
 
-    public Utente addAdminRole(long utenteId) {
+    public Utente addRole(long utenteId, String ruoloNome) {
+
         Utente utente = this.findById(utenteId);
 
-        Ruolo admin = rRepository.findByDenominazione("ADMIN")
-                .orElseThrow(() -> new RuntimeException("Ruolo ADMIN non trovato"));
+        Ruolo ruolo = rRepository.findByDenominazione(ruoloNome.toUpperCase())
+                .orElseThrow(() -> new NotFoundException("Ruolo non trovato"));
 
-        if (!utente.getRuoli().contains(admin)) {
-            utente.getRuoli().add(admin);
+        if (!utente.getRuoli().contains(ruolo)) {
+            utente.getRuoli().add(ruolo);
         }
 
         return uRep.save(utente);
