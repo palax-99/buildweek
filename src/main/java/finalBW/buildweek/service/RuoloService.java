@@ -47,4 +47,14 @@ public class RuoloService {
         Ruolo found = this.findById(id);
         rRepository.delete(found);
     }
+
+
+     public Ruolo findByDenominazione(String ruolo) {
+        return rRepository.findByDenominazione(ruolo).orElse(null);
+    }
+
+
+    public Ruolo save(Ruolo ruolo) {
+        return rRepository.save(ruolo);
+    }
 }

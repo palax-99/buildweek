@@ -114,4 +114,22 @@ public class UtenteService {
 
         return uRep.save(utente);
     }
+
+    public void deleteUtente(Long utenteId) {
+        Utente found = findById(utenteId);
+        uRep.delete(found);
+    }
+
+    public void deleteUtente(Utente utente) {
+        uRep.delete(utente);
+    }
+
+    public Utente update(Utente utente) {
+        return uRep.save(utente);
+    }
+
+    public void updatePassword(Utente utente, String newPassword) {
+        utente.setPassword(passwordEncoder.encode(newPassword));
+        uRep.save(utente);
+    }
 }
