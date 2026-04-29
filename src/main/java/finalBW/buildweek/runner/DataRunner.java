@@ -48,10 +48,10 @@ public class DataRunner implements CommandLineRunner {
         statoFatturaService.popolaStatiFattura();
         Long clientiVoluti = 25L;
         Long numberOfClienti = clientiService.count();
-        Long numberOfGenerations = clientiVoluti;
+        Long numberOfGenerations = 0L;
 
         if (numberOfClienti < clientiVoluti) {
-            numberOfGenerations -= numberOfClienti;
+            numberOfGenerations = clientiVoluti - numberOfClienti;
         }
 
         for (long i = 0; i < numberOfGenerations; i++) {
