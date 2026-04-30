@@ -62,5 +62,5 @@ public class UtenteController {
         return uService.addRole(utenteId, body.ruolo());
     }
 
-    
+
 }
