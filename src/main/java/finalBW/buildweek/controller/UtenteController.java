@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,9 +27,18 @@ public class UtenteController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPER_ADMIN')")
     public Page<Utente> findAll(@RequestParam(defaultValue = "0") int page,
-                                @RequestParam(defaultValue = "5") int size,
-                                @RequestParam(defaultValue = "cognome") String sortBy) {
-        return uService.findAll(page, size, sortBy);
+                                @RequestParam(defaultValue = "10") int size,
+                                @RequestParam(defaultValue = "cognome") String sortBy,
+                                @AuthenticationPrincipal Utente currentUser) {
+
+        boolean isSuperAdmin = currentUser.getRuoli().stream()
+                .anyMatch(r -> r.getDenominazione().equals("SUPER_ADMIN"));
+
+        if (isSuperAdmin) {
+            return uService.findAll(page, size, sortBy);
+        } else {
+            return uService.findAllOnlyUsers(page, size, sortBy);
+        }
     }
 
 
@@ -60,6 +70,12 @@ public class UtenteController {
             @RequestBody @Valid AssegnaRuoloDTO body) {
 
         return uService.addRole(utenteId, body.ruolo());
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'SUPER_ADMIN')")
+    public Utente getMyProfile(Authentication authentication) {
+        return (Utente) authentication.getPrincipal();
     }
 
 

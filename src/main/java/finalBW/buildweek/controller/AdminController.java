@@ -124,14 +124,18 @@ public class AdminController {
     }
 
     @PatchMapping("/{utenteId}/ruoli/resetpassword")
-    @PreAuthorize("hasAnyAuthority('SUPER_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('SUPER_ADMIN', 'ADMIN')") // 1. Aggiunto ADMIN qui
     @ResponseStatus(HttpStatus.OK)
     public TemporaryPasswordDTO resetPassword(@PathVariable Long utenteId, @AuthenticationPrincipal Utente currentUser) {
 
         Utente found = utenteService.findById(utenteId);
 
+        // 2. Aggiornata la condizione per includere ADMIN
+        boolean isAuthorized = currentUser.getRuoli().stream()
+                .anyMatch(r -> r.getDenominazione().equals("SUPER_ADMIN") ||
+                        r.getDenominazione().equals("ADMIN"));
 
-        if (currentUser.getRuoli().stream().anyMatch(r -> r.getDenominazione().equals("SUPER_ADMIN"))) {
+        if (isAuthorized) {
             SecureRandom random = new SecureRandom();
             StringBuilder password = new StringBuilder();
             String caratteri = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_+=<>?";
@@ -147,6 +151,7 @@ public class AdminController {
 
             return response;
         }
+
         throw new ForbiddenException("Non sei autorizzato a resettare la password");
     }
 
