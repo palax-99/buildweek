@@ -37,13 +37,14 @@ public class RuoliRunner implements CommandLineRunner {
         Ruolo superAdminRole = ruoloRepository.findByDenominazione("SUPER_ADMIN")
                 .orElseGet(() -> ruoloRepository.save(new Ruolo("SUPER_ADMIN")));
 
+        // 🔹 SUPER ADMIN
         if (!uRep.existsByEmail("superadmin@email.com")) {
             Utente superAdmin = new Utente(
                     "superadmin",
                     "superadmin@email.com",
                     passEncoder.encode("superadmin123"),
                     "Super",
-                    "superAdmin"
+                    "Admin"
             );
 
             superAdmin.getRuoli().add(user);
@@ -53,35 +54,44 @@ public class RuoliRunner implements CommandLineRunner {
             uRep.save(superAdmin);
         }
 
-        if (!uRep.existsByEmail("utentebase@email.com")) {
-            Utente utenteBase = new Utente(
-                    "utenteBase",
-                    "utentebase@email.com",
-                    passEncoder.encode("utentebase!"),
-                    "UtenteB",
-                    "Base"
-            );
+        // 🔹 10 UTENTI BASE
+        for (int i = 1; i <= 10; i++) {
+            String email = "user" + i + "@email.com";
 
-            utenteBase.getRuoli().add(user);
+            if (!uRep.existsByEmail(email)) {
+                Utente utenteBase = new Utente(
+                        "user" + i,
+                        email,
+                        passEncoder.encode("password123"),
+                        "Nome" + i,
+                        "Cognome" + i
+                );
 
-            uRep.save(utenteBase);
+                utenteBase.getRuoli().add(user);
+                uRep.save(utenteBase);
+            }
         }
 
-        if (!uRep.existsByEmail("utenteadmin@email.com")) {
-            Utente utenteAdmin = new Utente(
-                    "utenteAdmin",
-                    "utenteadmin@email.com",
-                    passEncoder.encode("utenteadmin!"),
-                    "UtenteA",
-                    "Admin"
-            );
+        // 🔹 5 ADMIN
+        for (int i = 1; i <= 5; i++) {
+            String email = "admin" + i + "@email.com";
 
-            utenteAdmin.getRuoli().add(user);
-            utenteAdmin.getRuoli().add(admin);
+            if (!uRep.existsByEmail(email)) {
+                Utente utenteAdmin = new Utente(
+                        "admin" + i,
+                        email,
+                        passEncoder.encode("admin123"),
+                        "AdminNome" + i,
+                        "AdminCognome" + i
+                );
 
-            uRep.save(utenteAdmin);
+                utenteAdmin.getRuoli().add(user);
+                utenteAdmin.getRuoli().add(admin);
+
+                uRep.save(utenteAdmin);
+            }
         }
 
-        System.out.println("Ruoli generati");
+        System.out.println("Ruoli e utenti generati");
     }
 }

@@ -12,15 +12,13 @@ import finalBW.buildweek.exceptions.ValidationException;
 import finalBW.buildweek.payload.NuovoUtenteDTO;
 import finalBW.buildweek.repository.RuoloRepository;
 import finalBW.buildweek.repository.UtenteRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -140,4 +138,27 @@ public class UtenteService {
         utente.setPassword(passwordEncoder.encode(newPassword));
         uRep.save(utente);
     }
+
+    // Per ADMIN: vede solo gli utenti USER puri
+    public Page<Utente> findAllOnlyUsers(int page, int size, String sortBy) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        Page<Utente> tutti = uRep.findAll(pageable);
+
+        List<Utente> filtrati = tutti.getContent().stream()
+                .filter(u -> u.getRuoli().stream()
+                        .noneMatch(r -> r.getDenominazione().equals("ADMIN")
+                                || r.getDenominazione().equals("SUPER_ADMIN")))
+                .toList();
+
+        long totaleCorretto = uRep.findAll().stream()
+                .filter(u -> u.getRuoli().stream()
+                        .noneMatch(r -> r.getDenominazione().equals("ADMIN")
+                                || r.getDenominazione().equals("SUPER_ADMIN")))
+                .count();
+
+        return new PageImpl<>(filtrati, pageable, totaleCorretto);
+    }
+
 }
