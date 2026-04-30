@@ -44,8 +44,9 @@ public class FattureController {
     @GetMapping
     public Page<Fattura> getAll(@RequestParam(defaultValue = "0") int page,
                                 @RequestParam(defaultValue = "10") int size,
-                                @RequestParam(defaultValue = "data") String sortBy) {
-        return this.fattureService.findAll(page, size, sortBy);
+                                @RequestParam(defaultValue = "data") String sortBy,
+                                @RequestParam(defaultValue = "desc") String direction) {
+        return this.fattureService.findAll(page, size, sortBy, direction);
     }
 
     // GET http://localhost:3001/fatture/cerca
@@ -59,10 +60,11 @@ public class FattureController {
             @RequestParam(required = false) Double importoMax,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "data") String sortBy) {
+            @RequestParam(defaultValue = "data") String sortBy,
+            @RequestParam(defaultValue = "desc") String direction) {
 
         return this.fattureService.findFiltered(clienteId, statoFatturaId, data, anno,
-                importoMin, importoMax, page, size, sortBy);
+                importoMin, importoMax, page, size, sortBy, direction);
     }
 
     // GET http://localhost:3001/fatture/{id}
