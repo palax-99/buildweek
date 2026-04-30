@@ -44,8 +44,9 @@ public class ClientiController {
     @GetMapping
     public Page<Cliente> getAll(@RequestParam(defaultValue = "0") int page,
                                 @RequestParam(defaultValue = "10") int size,
-                                @RequestParam(defaultValue = "ragioneSociale") String sortBy) {
-        return this.clientiService.findAll(page, size, sortBy);
+                                @RequestParam(defaultValue = "ragioneSociale") String sortBy,
+                                @RequestParam(defaultValue = "asc") String direction) {
+        return this.clientiService.findAll(page, size, sortBy, direction);
     }
 
     // GET http://localhost:3001/clienti/cerca

@@ -79,10 +79,13 @@ public class ClientiService {
 
     // LISTA tutti i clienti senza filtri (paginazione + ordinamento)
     // Soddisfa la task "Ordinare i clienti" delle slide
-    public Page<Cliente> findAll(int page, int size, String sortBy) {
+    public Page<Cliente> findAll(int page, int size, String sortBy, String direction) {
         if (size > 100 || size < 0) size = 10;
         if (page < 0) page = 0;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc")
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
         return this.clientiRepository.findAll(pageable);
     }
 
