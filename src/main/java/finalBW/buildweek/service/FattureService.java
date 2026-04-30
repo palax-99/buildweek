@@ -66,10 +66,13 @@ public class FattureService {
     }
 
     // LISTA tutte le fatture senza filtri (paginazione + ordinamento)
-    public Page<Fattura> findAll(int page, int size, String sortBy) {
+    public Page<Fattura> findAll(int page, int size, String sortBy, String direction) {
         if (size > 100 || size < 0) size = 10;
         if (page < 0) page = 0;
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc")
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
         return this.fattureRepository.findAll(pageable);
     }
 
@@ -82,10 +85,15 @@ public class FattureService {
             Integer anno,
             Double importoMin,
             Double importoMax,
-            int page, int size, String sortBy) {
+            int page, int size, String sortBy,
+            String direction) {
 
         if (size > 100 || size < 0) size = 10;
         if (page < 0) page = 0;
+
+        Sort.Direction sortDirection = direction.equalsIgnoreCase("desc")
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
 
         // Parto da Specification "vuota"
         Specification<Fattura> spec = Specification.unrestricted();
@@ -115,7 +123,7 @@ public class FattureService {
             spec = spec.and(FatturaSpecifications.importoMinoreUguale(importoMax));
         }
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
         return this.fattureRepository.findAll(spec, pageable);
     }
 
