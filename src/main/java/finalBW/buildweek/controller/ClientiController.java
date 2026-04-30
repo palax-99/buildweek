@@ -86,6 +86,7 @@ public class ClientiController {
         return this.clientiService.findByIdAndUpdate(clienteId, body);
     }
 
+
     // DELETE http://localhost:3001/clienti/{id}
     @DeleteMapping("/{clienteId}")
     @ResponseStatus(HttpStatus.NO_CONTENT) // 204
